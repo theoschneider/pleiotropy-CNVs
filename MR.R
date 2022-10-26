@@ -11,9 +11,11 @@ library(data.table) # for fread and fwrite
 library(ggplot2)
 # install.packages("Cairo")
 library(Cairo)
+library(dplyr)
 
 setwd("~/THÉO/SummaryMR")
 
+'''
 
 # Unzip all the bgz files (unnecessary)
 
@@ -47,6 +49,8 @@ combinations <- expand.grid(exposure = db_trait, outcome = db_trait, stringsAsFa
 combinations <- combinations[combinations$exposure != combinations$outcome,]
 rownames(combinations) <- 1:nrow(combinations)
 
+'''
+
 
 # Add corresponding IDs (Neale Lab round 2, IEU if not available) (exception : WHR is adj for BMI, and pop is european instead of UK)
 
@@ -58,8 +62,11 @@ rownames(combinations) <- 1:nrow(combinations)
 
 # Running the MRs
 
+knitr::opts_chunk$set(dpi = 500, fig.width = 7)
+
 results <- data.frame()
-for(i in 1:2){
+
+for(i in 77:77){
     exposure_id = combinations$exposure[i]
     outcome_id = combinations$outcome[i]
     exp_dat <- extract_instruments(outcomes = exposure_id,
@@ -74,9 +81,27 @@ for(i in 1:2){
     mr_report(dat, output_path = "~/THÉO/SummaryMR/1Results")
 }
 
-fwrite(results, file = "1Results/results.tsv", quote = FALSE, sep = "\t")
+fwrite(results, file = "1Results/results.tsv", append = TRUE, quote = FALSE, sep = "\t")
 
 # 107 seconds for 5 MR = 22 seconds per MR, total of 650*22 = 14300 seconds = 4 hours
+
+
+
+# Import results as dataframe, remove duplicates and save in a file
+
+results_df <- as.data.frame(fread("1Results/results.tsv", sep = "\t"))
+
+new_results_df <- distinct(results_df, id.exposure, id.outcome, method, .keep_all = TRUE)
+
+rownames(new_results_df) <- 1:nrow(new_results_df)
+
+fwrite(new_results_df, file = "1Results/new_results.tsv", quote = FALSE, sep = "\t")
+
+
+
+
+
+
 
 
 
