@@ -8,6 +8,7 @@ library(MRInstruments)
 library(R.utils) # for gunzip
 # install.packages("data.table")
 library(data.table) # for fread and fwrite
+# install.packages("ggplot2")
 library(ggplot2)
 # install.packages("Cairo")
 library(Cairo)
@@ -17,6 +18,14 @@ library(sys)
 library(svglite)
 # install.packages("pheatmap")
 library(pheatmap)
+# install.packages("ggrepel")
+library(ggrepel)
+# BiocManager::install("biomaRt")
+library(biomaRt)
+# install.packages("scales")
+library(scales)
+# install.packages("gridExtra")
+library(gridExtra)
 
 setwd("~/THÉO/SummaryMR")
 
@@ -110,7 +119,8 @@ for(i in 1:nrow(comparisons)){
     
 }
 
-signif.comp <- comparisons[comparisons$indirect.p.value <= 0.05,]
+signif.comp <- comparisons[comparisons$indirect.p.value <= 0.05 & comparisons$signif.methods >= 3,]
+insignif.comp <- subset(comparisons, !(comparisons %in% signif.comp))
 
 
 matrice <- matrix(nrow = 26, ncol = 26)
@@ -149,10 +159,79 @@ ggplot(data = signif.comp, aes(x = signif.comp$T2.trait)) +
     theme_bw() +
     theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0.5), plot.title = element_text(hjust = 0.5)) +
     ylim(-1, 1) +
-    geom_point(y = signif.comp$beta.CNV.on.T1.on.T2) + # black dots for every trait 1
+    geom_point(y = signif.comp$beta.CNV.on.T1.on.T2, aes(color = signif.comp$T1.trait)) + # black dots for every trait 1
     geom_point(y = signif.comp$beta.CNV.on.T2, col = "red", shape = 18, size = 2) + # red diamonds for direct effect on trait 2
     labs(x = "Trait 2", y = "Effect of CNV on trait 2 passing by trait 1", title = "Direct and indirect effects of the CNV region on 26 associated traits") + 
-    geom_text(aes(label = signif.comp$T1.trait, x = signif.comp$T2.trait, y = signif.comp$beta.CNV.on.T1.on.T2), nudge_y = 0.03, size = 3)
+    geom_text_repel(aes(label = signif.comp$T1.trait, x = signif.comp$T2.trait, y = signif.comp$beta.CNV.on.T1.on.T2), nudge_y = 0.03, size = 3)
+
+
+# Locus zoom plot
+
+mart.obj <- useMart(biomart = 'ensembl', dataset = 'hsapiens_gene_ensembl')
+
+locus_genes <- getBM(c("entrezgene_id","external_gene_name","chromosome_name","start_position","end_position", "description", "phenotype_description"), 
+                     filters = c("chromosome_name","start","end","with_entrezgene"), 
+                     values = list(16, 29400000, 30400000, TRUE), 
+                     mart = mart.obj)
+unique_locus_genes <- distinct(locus_genes, external_gene_name, start_position, end_position, .keep_all = TRUE)
+for(i in 1:nrow(unique_locus_genes)){
+    unique_locus_genes$description[i] <- strsplit(unique_locus_genes$description[i], "\\[")[[1]]
+}
+
+probes_plot <- ggplot(data = probes_mirror, aes(x = base_pair_location)) +
+    theme_bw() +
+    geom_point(y = rescale(-log10(probes_mirror$p_value))) +
+    ylim(0,1) +
+    xlim(29400000,30400000) +
+    labs(y = "-log10 of p-value (scaled)", title = "P-value of probes associated with the locus") +
+    theme(plot.margin = margin(l = 0.5, unit = "cm"))
+
+jitter <- rep(c(1,2), 25)
+
+genes_plot <- ggplot(data = unique_locus_genes) +
+    geom_segment(aes(x = start_position, xend = end_position, y = jitter, yend = jitter), linewidth = 3) +
+    geom_text_repel(aes(label = description, x = start_position + ((end_position - start_position) / 2), y = jitter), size = 3, max.overlaps = 30) +
+    theme_bw() +
+    ylim(0,3) +
+    xlim(29400000,30400000) +
+    guides(y = "none") +
+    labs(x = "Base pair location of the genes and the probes", y = "Genes") +
+    theme(plot.margin = margin(l = 1.4, unit = "cm"))
+
+grid.arrange(probes_plot, genes_plot, nrow = 2, heights = c(4,1))
+
+
+# Pearson correlation
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
