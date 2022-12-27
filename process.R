@@ -3,13 +3,7 @@
 library(TwoSampleMR) # has to be installed from github via remotes
 library(MRInstruments) # same
 library(data.table) # for fread and fwrite
-library(ggplot2) # for graphs
-library(ggrepel) # same
-library(scales) # same
-library(Cairo) # same
 library(dplyr) # for %in%
-library(pheatmap) # for heatmap
-library(biomaRt) # for genes coordinates, has to be installed via BiocManager
 
 
 
