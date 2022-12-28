@@ -1,0 +1,4 @@
+"ID"	"trait"
+"ukb-b-3768"	"age at menarche"
+"ukb-d-30620_irnt"	"serum alanine aminotransferase measurement"
+"ukb-d-30600_irnt"	"serum albumin measurement"
