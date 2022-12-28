@@ -1,6 +1,6 @@
 # Pleiotropic mechanisms of copy number variants
 
-This script (pleiotropy-CNVs.R) uses both Mendelian randomization and CNV-GWAS files to determine the effects :
+This script (pleiotropy-CNVs.R) uses both Mendelian randomization and CNV-GWAS files to determine the effects:
 - of the CNV on the different traits,
 - of the traits on every other trait.  
   
@@ -9,7 +9,7 @@ This script (pleiotropy-CNVs.R) uses both Mendelian randomization and CNV-GWAS f
 
 This program requires the installation of a few packages, which are all listed in the script.  
 
-It also requires two files as an input :
+It also requires two files as an input:
 - a list of IDs with 2 columns : "ID" is a list of IDs and "trait" is the corresponding phenotype in the probes files. IDs must be coming from the [IEU GWAS database](https://gwas.mrcieu.ac.uk).
 - a file containing the top probe for each trait in the region of interest. Should have at least a "trait" column, with traits corresponding to the ones in the IDs file above, and a "effect_allele" column with the direction.  
 
