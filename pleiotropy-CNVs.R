@@ -28,7 +28,7 @@ probes_filename <- "probes.tsv" # Name of the file containing the top probe for 
 # File must be in the input directory. 
 
 treshold <- 0.05 # Can be assigned to define the treshold of the different p-values.
-MTC <- 3 # Minimal number of significant tests for multiple testing correction (set to 0 or 1 for no MTC).
+MTC <- 3 # Minimal number of significant tests for multiple testing correction, maximum is 5 (set to 0 or 1 for no MTC).
 direction <- "additional copy" # Can be other directions, has to be the same as the column in probes.
 
 save.MR.plots <- FALSE # Save MR plots? False by default. 
