@@ -21,4 +21,4 @@ After setting all the variables, the entire script can be run at once.
 
 ## Acknowledgments
 
-Thank you to all the members of the Statistical Genetics Group for their help and advice. 
+Thank you to all the members of the [Statistical Genetics Group](https://wp.unil.ch/sgg/) for their help and advice. 
